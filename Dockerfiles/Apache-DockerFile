@@ -1,0 +1,128 @@
+# UBUNTU 16.04
+FROM ubuntu:xenial
+
+# Create these folder to mount Local SVN while running contiainer from docker-composer.yml
+RUN mkdir -p /srv/www/vhosts/trunk \
+			 /srv/www/vhosts/rapidstage \
+			 /srv/www/vhosts/rapidproduction \
+			 /srv/www/vhosts/standardstage \
+			 /srv/www/vhosts/standardproduction \
+			 /srv/www/vhosts/Conf
+
+# Create these dependent folder with writtable permissions.
+RUN mkdir -m 777 -p /srv/www/vhosts/trunk/Interfaces \
+					/srv/www/vhosts/trunk/Logs \
+					/srv/www/vhosts/trunk/Mounts \
+					/srv/www/vhosts/trunk/NonBackupMounts \
+					/srv/www/vhosts/trunk/VoipMounts \
+					/srv/www/vhosts/trunk/PsCoreConfig \
+					/srv/www/vhosts/rapidstage/Interfaces \
+					/srv/www/vhosts/rapidstage/Logs \
+					/srv/www/vhosts/rapidstage/Mounts \
+					/srv/www/vhosts/rapidstage/NonBackupMounts \
+					/srv/www/vhosts/rapidstage/VoipMounts \
+					/srv/www/vhosts/rapidstage/PsCoreConfig \
+					/srv/www/vhosts/rapidproduction/Interfaces \
+					/srv/www/vhosts/rapidproduction/Logs \
+					/srv/www/vhosts/rapidproduction/Mounts \
+					/srv/www/vhosts/rapidproduction/NonBackupMounts \
+					/srv/www/vhosts/rapidproduction/VoipMounts  \
+					/srv/www/vhosts/rapidproduction/PsCoreConfig \
+					/srv/www/vhosts/standardstage/Interfaces \
+					/srv/www/vhosts/standardstage/Logs \
+					/srv/www/vhosts/standardstage/Mounts \
+					/srv/www/vhosts/standardstage/NonBackupMounts \
+					/srv/www/vhosts/standardstage/VoipMounts \
+					/srv/www/vhosts/standardstage/PsCoreConfig \
+					/srv/www/vhosts/standardproduction/Interfaces \
+					/srv/www/vhosts/standardproduction/Logs \
+					/srv/www/vhosts/standardproduction/Mounts \
+					/srv/www/vhosts/standardproduction/NonBackupMounts \
+					/srv/www/vhosts/standardproduction/VoipMounts \
+					/srv/www/vhosts/standardproduction/PsCoreConfig
+  
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -y && apt-get install -y aptitude \
+	&& aptitude update -y && aptitude install -y apt-utils && aptitude install -y apache2 \
+	iputils-ping \
+	php-pear \
+	vim \
+	ssh \
+	whois \
+	imagemagick \
+	curl \
+	subversion \
+	ghostscript \
+	sysstat \
+	make \
+	libavcodec-extra \
+	libmp3lame0 \
+	openssl \
+	build-essential \
+	libssl-dev \
+	libgif7 \
+	ntp \
+	nfs-common \
+	postgresql-client-common \
+	pdftk \
+	xvfb \
+	wkhtmltopdf \
+	phantomjs \
+	libav-tools \
+	clamav \
+	clamav-base \
+	clamav-daemon \
+	libapache2-mod-php \
+	postgresql-client-9.5 \
+	php7.0-gd \
+	php7.0-imap \
+	php7.0-ldap \
+	php7.0-mbstring \
+	php7.0-mcrypt \
+	php7.0-mysql \
+	php7.0-pgsql \
+	php7.0-zip \
+	php7.0-xml \
+	php7.0-curl \
+	php7.0-bcmath \
+	php7.0-tidy \
+	php-redis \
+	php7.0-soap \
+	php7.0-pdo-dblib \
+	php7.0-pdo-mysql \
+	php7.0-pdo-odbc \
+	php7.0-pdo-pgsql \
+	php7.0-pdo-sqlite \
+	php7.0-odbc \
+	tdsodbc
+	
+RUN echo "\n\
+IncludeOptional /srv/www/vhosts/Conf/*.conf \n\
+" >> /etc/apache2/apache2.conf
+
+COPY ./Files/RedisAdmin /srv/www/vhosts/RedisAdmin
+
+# Apache + PHP requires preforking Apache for best results
+RUN a2dismod mpm_event \
+	&& a2enmod mpm_prefork proxy proxy_http ldap ssl rewrite cache expires php7.0 headers 
+
+COPY ./Files/PHP/Apache/excel.so /usr/lib/php/20151012/excel.so
+COPY ./Files/PHP/Apache/libxl.so /usr/lib/libxl.so
+COPY ./Files/PHP/Apache/excel.ini /etc/php/7.0/mods-available/excel.ini
+
+COPY ./Files/PHP/Apache/ESL.so /usr/lib/php/20151012/ESL.so
+COPY ./Files/PHP/Apache/ESL.ini /etc/php/7.0/mods-available/ESL.ini
+
+RUN phpenmod excel
+RUN phpenmod ESL
+
+# NODE
+RUN aptitude update -y && aptitude install -y nodejs && aptitude install -y npm && aptitude install -y build-essential
+
+RUN a2disconf javascript-common
+RUN rm -rf /var/lib/apt/lists/*
+
+# System
+EXPOSE 22
+
+# Apache - Ports
+EXPOSE 80 443

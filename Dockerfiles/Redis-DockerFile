@@ -1,0 +1,15 @@
+# UBUNTU 16.04
+FROM ubuntu:xenial
+
+# REDIS SERVER
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -y && apt-get install -y aptitude iputils-ping && aptitude update -y && aptitude install -y redis-server vim ssh
+COPY ./Files/Configurations/sentinel.conf /etc/redis/
+RUN sed -i '/bind 127.0.0.1/c\#bind 127.0.0.1' /etc/redis/redis.conf
+
+RUN rm -rf /var/lib/apt/lists/*
+
+# System
+EXPOSE 22
+
+# Redis - Ports
+EXPOSE 26379 6379

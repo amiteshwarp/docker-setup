@@ -1,0 +1,14 @@
+# UBUNTU 16.04
+FROM ubuntu:xenial
+
+# RABBITMQ
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -y && apt-get install -y aptitude iputils-ping && aptitude update -y && aptitude install -y rabbitmq-server vim ssh && rabbitmq-plugins enable rabbitmq_management
+COPY ./Files/Configurations/rabbitmq.config /etc/rabbitmq/
+
+RUN rm -rf /var/lib/apt/lists/*
+
+# System
+EXPOSE 22
+
+# RabbitMQ - Ports
+EXPOSE 15672 5672

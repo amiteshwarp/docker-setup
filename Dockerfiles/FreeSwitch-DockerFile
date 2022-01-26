@@ -1,0 +1,30 @@
+# Debian 7.8
+FROM debian:7.8
+
+RUN DEBIAN_FRONTEND=noninteractive apt-get update -y && apt-get install -y aptitude iputils-ping \
+	&& aptitude update -y \
+	&& aptitude install -y \	
+	vim  \
+	ssh \
+	wget \
+	apt-utils \
+	&& wget -O - http://files.freeswitch.org/repo/deb/debian/freeswitch_archive_g0.pub | apt-key add - \
+	&& echo "deb http://files.freeswitch.org/repo/deb/freeswitch-1.4/ wheezy main" > /etc/apt/sources.list.d/freeswitch.list && apt-get update -y && apt-get install -y freeswitch-meta-all \
+	&& adduser --disabled-password  --quiet --system --home /usr/share/freeswitch --gecos "FreeSWITCH Voice Platform" --ingroup daemon freeswitch \
+    && chown -R freeswitch:daemon /usr/share/freeswitch/ \
+    && chmod -R o-rwx /usr/share/freeswitch/ \
+    && chmod +x /etc/init.d/freeswitch \
+    && update-rc.d freeswitch defaults \
+	&& mkdir -p /etc/freeswitch \
+    && cp -a /usr/share/freeswitch/conf/vanilla/* /etc/freeswitch \
+	&& apt-get install odbc-postgresql
+	
+COPY ./Files/PHP/FreeSwitch/odbc.ini /etc/odbc.ini
+
+RUN rm -rf /var/lib/apt/lists/*
+
+# System
+EXPOSE 22
+
+# FreeSWITCH - Ports
+EXPOSE 5080 8021

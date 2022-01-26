@@ -1,0 +1,14 @@
+version: '3.3'
+services:
+  ionic:
+    container_name: ionic-container
+    image: ionic:latest
+    build: 
+      context: .
+      dockerfile: ./Dockerfiles/Ionic-DockerFile
+    ports:
+     - "8100:8100"
+    tty: true
+    volumes:
+      -  D:\Practice\ionic:/home/ionic
+      - ./:/data

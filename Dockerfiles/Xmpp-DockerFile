@@ -1,0 +1,19 @@
+# UBUNTU 16.04
+FROM ubuntu:xenial
+
+# Ejabberd
+RUN DEBIAN_FRONTEND=noninteractive \
+					apt-get upgrade -y \
+					&& apt-get update -y \
+					&& apt-get install -y aptitude \
+					&& aptitude update -y \
+					&& aptitude install -y apt-utils \
+					&& aptitude -y install ejabberd vim ssh \
+					&& sed -i '/#ERLANG_NODE=ejabberd/c\ERLANG_NODE=ejabberd@localhost' /etc/ejabberd/ejabberdctl.cfg
+RUN rm -rf /var/lib/apt/lists/*
+
+# System
+EXPOSE 22
+
+# Ejabberd - Ports
+EXPOSE 5280 5222

@@ -1,0 +1,136 @@
+version: '3.3'
+services:
+   #freeswitch:
+   # container_name: freeswitch-container
+    #image: docker_freeswitch:latest
+    #build: 
+    #  context: .
+    #  dockerfile: ./Dockerfiles/Freeswitch-DockerFile
+    #ports:
+    # - "5022:22"
+    # - "5080:5080"
+    # - "8021:8021"
+    #tty: true
+   xmpp:
+    container_name: xmpp-container
+    image: docker_xmpp:latest
+    networks:
+      entrata:
+        aliases:
+          - xmpp.localhost
+    build: 
+      context: .
+      dockerfile: ./Dockerfiles/Xmpp-DockerFile
+    ports:
+     - "4022:22"
+     - "5280:5280"
+     - "5222:5222"
+    tty: true
+   rabbit:
+    container_name: rabbit-container
+    image: docker_rabbit:latest
+    networks:
+      entrata:
+        aliases:
+          - rabbit.localhost
+    build: 
+      context: .
+      dockerfile: ./Dockerfiles/Rabbit-DockerFile
+    ports:
+     - "3022:22"
+     - "15672:15672"
+    tty: true
+   redis:
+    container_name: redis-container
+    networks:
+      entrata:
+        aliases:
+          - redis.localhost
+    image: docker_redis:latest
+    build: 
+      context: .
+      dockerfile: ./Dockerfiles/Redis-DockerFile
+    ports:
+     - "2022:22"
+    tty: true
+   apache:
+    container_name: apache-container
+    networks:
+      entrata:
+        aliases:
+          - apache.localhost  
+    image: docker_apache:latest
+    build: 
+      context: .
+      dockerfile: ./Dockerfiles/Apache-DockerFile
+    ports:
+     - "1022:22"
+     - "80:80"
+     - "443:443"
+    tty: true
+    volumes:
+      # Trunk
+      -  C:\svn\PsCore\trunk:/srv/www/vhosts/trunk/Entrata
+      -  C:\svn\PsCoreCommon\trunk:/srv/www/vhosts/trunk/Common
+      -  C:\svn\PsLibraries\trunk:/srv/www/vhosts/trunk/PsLibraries
+      -  C:\svn\EntrataCoreTestAutomation\trunk:/srv/www/vhosts/trunk/EntrataCoreTestAutomation
+      -  C:\svn\PsCoreConfig\trunk\:/srv/www/vhosts/trunk/PsCoreConfig
+      -  C:\svn\Mounts:/srv/www/vhosts/trunk/Mounts
+      -  C:\svn\NonBackupMounts:/srv/www/vhosts/trunk/NonBackupMounts
+      -  C:\svn\VoipMounts:/srv/www/vhosts/trunk/VoipMounts
+      -  C:\svn\Interfaces:/srv/www/vhosts/trunk/Interfaces
+      -  C:\svn\Logs:/srv/www/vhosts/trunk/Logs
+
+      #RapidStage
+      -  C:\svn\PsCore\branches\rapidstage:/srv/www/vhosts/rapidstage/Entrata
+      -  C:\svn\PsCoreCommon\branches\rapidstage:/srv/www/vhosts/rapidstage/Common
+      -  C:\svn\PsLibraries\branches\rapidstage:/srv/www/vhosts/rapidstage/PsLibraries
+      -  C:\svn\EntrataCoreTestAutomation\branches\rapidstage:/srv/www/vhosts/rapidstage/EntrataCoreTestAutomation
+      -  C:\svn\PsCoreConfig\branches\rapidstage:/srv/www/vhosts/rapidstage/PsCoreConfig
+      -  C:\svn\Mounts:/srv/www/vhosts/rapidstage/Mounts
+      -  C:\svn\NonBackupMounts:/srv/www/vhosts/rapidstage/NonBackupMounts
+      -  C:\svn\VoipMounts:/srv/www/vhosts/rapidstage/VoipMounts
+      -  C:\svn\Interfaces:/srv/www/vhosts/rapidstage/Interfaces
+      -  C:\svn\Logs:/srv/www/vhosts/rapidstage/Logs
+
+      #RapidProduction
+      -  C:\svn\PsCore\branches\rapidproduction:/srv/www/vhosts/rapidproduction/Entrata
+      -  C:\svn\PsCoreCommon\branches\rapidproduction:/srv/www/vhosts/rapidproduction/Common
+      -  C:\svn\PsLibraries\branches\rapidproduction:/srv/www/vhosts/rapidproduction/PsLibraries
+      -  C:\svn\EntrataCoreTestAutomation\branches\rapidproduction:/srv/www/vhosts/rapidproduction/EntrataCoreTestAutomation
+      -  C:\svn\PsCoreConfig\branches\rapidproduction:/srv/www/vhosts/rapidproduction/PsCoreConfig
+      -  C:\svn\Mounts:/srv/www/vhosts/rapidproduction/Mounts
+      -  C:\svn\NonBackupMounts:/srv/www/vhosts/rapidproduction/NonBackupMounts
+      -  C:\svn\VoipMounts:/srv/www/vhosts/rapidproduction/VoipMounts
+      -  C:\svn\Interfaces:/srv/www/vhosts/rapidproduction/Interfaces
+      -  C:\svn\Logs:/srv/www/vhosts/rapidproduction/Logs
+
+      #StandardStage
+      -  C:\svn\PsCore\branches\standardstage:/srv/www/vhosts/standardstage/Entrata
+      -  C:\svn\PsCoreCommon\branches\standardstage:/srv/www/vhosts/standardstage/Common
+      -  C:\svn\PsLibraries\branches\standardstage:/srv/www/vhosts/standardstage/PsLibraries
+      -  C:\svn\EntrataCoreTestAutomation\branches/standardstage:/srv/www/vhosts/standardstage/EntrataCoreTestAutomation
+      -  C:\svn\PsCoreConfig\branches\standardstage:/srv/www/vhosts/standardstage/PsCoreConfig
+      -  C:\svn\Mounts:/srv/www/vhosts/standardstage/Mounts
+      -  C:\svn\NonBackupMounts:/srv/www/vhosts/standardstage/NonBackupMounts
+      -  C:\svn\VoipMounts:/srv/www/vhosts/standardstage/VoipMounts
+      -  C:\svn\Interfaces:/srv/www/vhosts/standardstage/Interfaces
+      -  C:\svn\Logs:/srv/www/vhosts/standardstage/Logs
+
+      #StandardProduction
+      -  C:\svn\PsCore\branches\standardproduction:/srv/www/vhosts/standardproduction/Entrata
+      -  C:\svn\PsCoreCommon\branches\standardproduction:/srv/www/vhosts/standardproduction/Common
+      -  C:\svn\PsLibraries\branches\standardproduction:/srv/www/vhosts/standardproduction/PsLibraries
+      -  C:\svn\EntrataCoreTestAutomation\branches\standardproduction:/srv/www/vhosts/standardproduction/EntrataCoreTestAutomation
+      -  C:\svn\PsCoreConfig\branches\standardproduction:/srv/www/vhosts/standardproduction/PsCoreConfig
+      -  C:\svn\Mounts:/srv/www/vhosts/standardproduction/Mounts
+      -  C:\svn\NonBackupMounts:/srv/www/vhosts/standardproduction/NonBackupMounts
+      -  C:\svn\VoipMounts:/srv/www/vhosts/standardproduction/VoipMounts
+      -  C:\svn\Interfaces:/srv/www/vhosts/standardproduction/Interfaces
+      -  C:\svn\Logs:/srv/www/vhosts/standardproduction/Logs
+
+      #Common
+      -  C:\svn\PsCoreConfig\linux_configuration:/srv/www/vhosts/Conf
+      -  C:\svn\Logs:/srv/www/vhosts/Logs
+networks:
+  entrata:
